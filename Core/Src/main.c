@@ -74,7 +74,26 @@ void SystemClock_Config(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+void send_emulated(uint8_t * data, uint32_t length) {
+  uint32_t ptr = 0;
+  while(1) {
+    if(length - ptr > 1) {
+      // we send out two bytes in one packet (note on)
+      uint8_t message[] = {0x09, 0x90 | data[ptr] >> 7 | (data[ptr + 1] >> 7) << 1, data[ptr] & 0b01111111, data[ptr + 1] & 0b01111111}; 
+      sendMidiMessage(message, 4);
+      ptr += 2;
+    } else if (length - ptr == 1) {
+      // we send out one byte in one packet (note off)
+      uint8_t message[] = {0x08, 0x80 | data[ptr] >> 7, data[ptr] & 0b01111111, 0x00}; 
+      sendMidiMessage(message, 4);
+      ptr += 1;
+    } else {
+      return;
+    }
+    midiProcess();
+    USBD_MIDI_SendPacket();
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -109,18 +128,20 @@ int main(void)
   MX_SPI1_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-
+  for(int i = 0; i < 8000000; i++);
+  midiInit();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  for(int i = 0; i < 8000000; i++);
-  midiInit();
   while (1)
   {
+    //sleep
     for(int i = 0; i < 800000; i++);
-    uint8_t message[] = {0x19, 0x90, 0x32, 0x32}; 
-    sendMidiMessage(message, 4);
+    uint8_t message[] = "hallo, welt!\n"; 
+    send_emulated(message, sizeof(message));
+    
+    // do midi usb housekeeping
     midiProcess();
     USBD_MIDI_SendPacket();
   /* USER CODE END WHILE */
