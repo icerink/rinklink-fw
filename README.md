@@ -5,12 +5,14 @@ The microcontroller firmware for tunneling the SPI over midi USB.
 
 ## Message encoding
 
-For staying inside the midi spec, and being able to send only valid midi messages, we comunicate only through `note off` messages.
+For staying inside the midi spec, and being able to send only valid midi messages, we comunicate only through `note on` messages.
 We can pack two bytes in one note off command by using 7bit velocity, 7bit note number and the 2lsb of the channel number.
 
-| spi message (2 bytes) | midi message (3 bytes / one `note off`) |
+| spi message (2 bytes) | midi message (3 bytes / one `note on`) |
 | --------------------- | --------------------------------------- |
 | 0bABCDEFGH 0bIJKLMNOP | 0b1001xxAI 0b0BCDEFGH 0b0JKLMNOP        |
+
+A `note off` message is used to reset the fpga into a programming state by pulling RESET low and SPI_SS high.
 
 ## Build & Flash
 
