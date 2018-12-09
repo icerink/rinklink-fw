@@ -52,6 +52,7 @@
 #include "spi.h"
 #include "usb_device.h"
 #include "gpio.h"
+#include "usbd_midi_if.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -113,9 +114,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  for(int i = 0; i < 8000000; i++);
+  midiInit();
   while (1)
   {
-
+    for(int i = 0; i < 800000; i++);
+    uint8_t message[] = {0x19, 0x90, 0x32, 0x32}; 
+    sendMidiMessage(message, 4);
+    midiProcess();
+    USBD_MIDI_SendPacket();
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
