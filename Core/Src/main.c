@@ -90,7 +90,6 @@ void send_emulated(uint8_t * data, uint32_t length) {
     } else {
       return;
     }
-    midiProcess();
     USBD_MIDI_SendPacket();
   }
 }
@@ -137,12 +136,10 @@ int main(void)
   while (1)
   {
     //sleep
-    for(int i = 0; i < 800000; i++);
-    uint8_t message[] = "hallo, welt!\n"; 
+    uint8_t message[] = "123456789\n"; 
     send_emulated(message, sizeof(message));
     
     // do midi usb housekeeping
-    midiProcess();
     USBD_MIDI_SendPacket();
   /* USER CODE END WHILE */
 
