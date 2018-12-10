@@ -133,11 +133,12 @@ static uint16_t MIDI_DataRx(uint8_t *msg, uint16_t length){
 }
 
 void sendMidiMessage(uint8_t *msg, uint16_t size){
-  // block until we have space in the output buffer
-  while(USB_Tx_State == 1);
-  USBD_MIDI_SendPacket();
-
   if(size == 4){
+		if (APP_RX_DATA_SIZE < APP_Rx_ptr_in + 4) {
+			USBD_MIDI_SendPacket();
+			while(USB_Tx_State == 1);
+		}
+
     MIDI_DataTx(msg, size);
   }
 }

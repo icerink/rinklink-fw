@@ -138,9 +138,6 @@ int main(void)
     //sleep
     uint8_t message[] = "123456789\n"; 
     send_emulated(message, sizeof(message));
-    
-    // do midi usb housekeeping
-    USBD_MIDI_SendPacket();
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
